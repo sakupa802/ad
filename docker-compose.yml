@@ -1,0 +1,41 @@
+version: '3'
+services:
+  backend: &app_base
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./www/app:/app
+      - ./nginx/server.conf:/etc/nginx/nginx.conf
+      - ./nginx/logs/nginx/:/var/log/nginx/
+      - ./etc/letsencrypt/live/exapmle.com/cert.pem:/etc/nginx/cert.pem
+      - ./etc/letsencrypt/live/exapmle.com/privkey.pem:/etc/nginx/private.pem
+    ports:
+      - 8082:80
+      - 445:443
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_USERNAME=root
+      - DATABASE_PASSWORD=pass
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - db
+    shm_size: 1G
+    tty: true
+    stdin_open: true
+  redis:
+    image: redis:4.0
+    ports:
+      - 6380:6379
+  db:
+    image: mysql:8.0
+    ports:
+      - 3307:3306
+    volumes:
+      - mysql-webapp-data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/my.cnf
+    environment:
+      - MYSQL_ROOT_PASSWORD=pass
+volumes:
+  mysql-webapp-data:
