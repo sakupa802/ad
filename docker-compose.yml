@@ -1,6 +1,6 @@
 version: '3'
 services:
-  backend: &app_base
+  web: &app_base
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,8 +8,8 @@ services:
       - ./www/app:/app
       - ./nginx/server.conf:/etc/nginx/nginx.conf
       - ./nginx/logs/nginx/:/var/log/nginx/
-      - ./etc/letsencrypt/live/exapmle.com/cert.pem:/etc/nginx/cert.pem
-      - ./etc/letsencrypt/live/exapmle.com/privkey.pem:/etc/nginx/private.pem
+      #- ./etc/letsencrypt/live/exapmle.com/cert.pem:/etc/nginx/cert.pem
+      #- ./etc/letsencrypt/live/exapmle.com/privkey.pem:/etc/nginx/private.pem
     ports:
       - 8082:80
       - 445:443
@@ -20,6 +20,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
+      - app
       - db
     shm_size: 1G
     tty: true
@@ -28,6 +29,10 @@ services:
     image: redis:4.0
     ports:
       - 6380:6379
+  app:
+    image: php:7.2-fpm-alpine
+    volumes:
+      - ./www/app:/app
   db:
     image: mysql:8.0
     ports:
