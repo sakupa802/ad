@@ -3,7 +3,7 @@ FROM nginx:1.15.5-alpine
 ENV LANG C.UTF-8
 ENV DOMAIN_NAME localhost
 
-RUN apk update && apk upgrade && apk add --no-cache mysql-dev mysql-client libxml2 libxslt imagemagick openssh git less curl bash
+RUN apk update && apk upgrade && apk add --no-cache mysql-dev mysql-client libxml2 libxslt imagemagick openssh vim git less curl bash
 RUN apk --update add tzdata && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
     echo Asia/Tokyo > /etc/timezone
